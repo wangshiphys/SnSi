@@ -77,9 +77,7 @@ ax.annotate(
 
 ax.set_aspect("equal")
 ax.set_axis_off()
-try:
-    plt.get_current_fig_manager().window.showMaximized()
-except Exception:
-    fig.set_size_inches(10.4, 9.18)
+fig.set_size_inches(4.6, 4.2)
 plt.show()
+# fig.savefig("DefModel.png", dpi=500)
 plt.close("all")
