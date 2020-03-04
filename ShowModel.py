@@ -5,79 +5,98 @@ Demonstrate the model used in this project.
 
 import matplotlib.pyplot as plt
 
-from DataBase import POINTS
+from DataBase import POINTS, POINTS13, POINTS14, NNPAIRS
 
 
 LW = 4
 MS = 15
+
+site_num = 13
+where0 = (6, 7)
+
+# site_num = 14
+# where0 = (6, 7)
+# where1 = (7, 8)
+
+# site_num = 14
+# where0 = (6, 7)
+# where1 = (3, 6)
+
 fig, ax = plt.subplots(num="ShowModel")
+ax.set_axis_off()
+ax.set_aspect("equal")
 
-x0, y0 = POINTS[7]
-x1, y1 = POINTS[8]
-line_t0, = ax.plot(
-    [x0, x1], [y0, y1], ls="dashed", lw=LW/2, color="tab:red", zorder=1
-)
-
-lines_t1 = [
-    (1, 2), (3, 5), (6, 9), (10, 12),
-    (1, 6), (2, 10), (5, 11), (9, 12),
-    (2, 9), (1, 12), (3, 11), (6, 10),
-]
-for i, j in lines_t1:
-    x0, y0 = POINTS[i]
-    x1, y1 = POINTS[j]
+# Plot the original triangular lattice
+for i, j in NNPAIRS:
     line_t1, = ax.plot(
-        [x0, x1], [y0, y1], ls="solid", lw=LW, color="tab:blue", zorder=0
+        POINTS[[i, j], 0], POINTS[[i, j], 1],
+        ls="solid", lw=LW, color="tab:blue", zorder=0
     )
-
-point_U0, = ax.plot(
-    POINTS[0, 0], POINTS[0, 1],
-    ls="", marker="o", color="tab:red", ms=MS, zorder=2
-)
 point_U1, = ax.plot(
-    POINTS[1:, 0], POINTS[1:, 1],
+    POINTS[:, 0], POINTS[:, 1],
     ls="", marker="o", color="black", ms=MS, zorder=2
 )
+for index, point in enumerate(POINTS):
+    ax.text(
+        point[0], point[1] - 0.2, str(index),
+        ha="center", va="top", color="black", fontsize="xx-large",
+    )
+
+# Plot the the extra point(s).
+if site_num == 13:
+    i, j = where0
+    points = POINTS13["({0},{1})".format(i, j)]
+
+    line_t0, = ax.plot(
+        POINTS[[i, j], 0], POINTS[[i, j], 1],
+        ls="dashed", lw=LW / 2, color="tab:red", zorder=1
+    )
+    point_U0, = ax.plot(
+        points[-1:, 0], points[-1:, 1],
+        ls="", marker="o", color="tab:red", ms=MS, zorder=2
+    )
+    ax.text(
+        points[-1, 0], points[-1, 1] - 0.2, str(index + 1),
+        ha="center", va="top", color="black", fontsize="xx-large",
+    )
+    fig_name = "ShowModel_num={0}_where=({1},{2}).png".format(
+        site_num, *where0
+    )
+else:
+    i, j = where0
+    k, l = where1
+    points = POINTS14["({0},{1},{2},{3})".format(i, j, k, l)]
+
+    line_t0, = ax.plot(
+        POINTS[[i, j], 0], POINTS[[i, j], 1],
+        ls="dashed", lw=LW / 2, color="tab:red", zorder=1
+    )
+    line_t0, = ax.plot(
+        POINTS[[k, l], 0], POINTS[[k, l], 1],
+        ls="dashed", lw=LW / 2, color="tab:red", zorder=1
+    )
+    point_U0, = ax.plot(
+        points[-2:, 0], points[-2:, 1],
+        ls="", marker="o", color="tab:red", ms=MS, zorder=2
+    )
+    ax.text(
+        points[-2, 0], points[-2, 1] - 0.2, str(index + 1),
+        ha="center", va="top", color="black", fontsize="xx-large",
+    )
+    ax.text(
+        points[-1, 0], points[-1, 1] - 0.2, str(index + 2),
+        ha="center", va="top", color="black", fontsize="xx-large",
+    )
+    fig_name = "ShowModel_num={0}_where=({1},{2})_where1=({3},{4}).png".format(
+        site_num, *where0, *where1
+    )
 
 ax.legend(
     [point_U0, point_U1, line_t0, line_t1],
     ["$U_0$", "$U_1$", "$t_0$", "$t_1$"],
     loc=0, markerscale=0.8,
 )
-
-for i in range(13):
-    color = "tab:red" if i == 0 else "black"
-    ax.text(
-        POINTS[i, 0], POINTS[i, 1] - 0.2, str(i),
-        ha="center", va="top", color=color, fontsize="xx-large",
-    )
-
-for i, j in [(0, 7), (0, 8)]:
-    x, y = (POINTS[i] + POINTS[j]) / 2
-    ax.text(
-        x, y + 0.05, "$t_0$",
-        ha="center", va="bottom", color="tab:red", fontsize="xx-large",
-    )
-x, y = (POINTS[4] + POINTS[7]) / 2
-ax.text(
-    x, y, "$t_1$",
-    ha="right", va="bottom", color="tab:blue", fontsize="xx-large",
-)
-
-ax.text(
-    POINTS[0, 0], POINTS[0, 1] + 0.1, "$U_0$",
-    ha="center", va="bottom", color="tab:red", fontsize="xx-large",
-)
-x, y = POINTS[4]
-ax.annotate(
-    "$U_1$", xy=(x, y + 0.1), xytext=(x, y + 0.5),
-    ha="center", va="bottom", color="tab:blue", fontsize="xx-large",
-    arrowprops={"width": 1.0, "headwidth": 4.0, "color": "tab:blue"},
-)
-
-ax.set_aspect("equal")
-ax.set_axis_off()
 fig.set_size_inches(4.6, 4.2)
 plt.show()
-# fig.savefig("DefModel.png", dpi=500)
+# fig.savefig(fig_name, dpi=200)
 plt.close("all")
