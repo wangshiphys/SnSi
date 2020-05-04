@@ -152,11 +152,8 @@ def TypicalSolver(cell, nump=13, numk=100, gamma=0.01, **model_params):
     projected_dos = np.array(
         [
             np.dot(
-                Lorentzian(xs=omega, x0=BZMeshEs, gamma=gamma), BZMeshProbs
+                Lorentzian(x=omega, x0=BZMeshEs, gamma=gamma), BZMeshProbs
             ) for omega in omegas
         ]
     ) / (numk * numk)
     return GE, mu, avg_particle_nums, omegas, projected_dos
-
-
-

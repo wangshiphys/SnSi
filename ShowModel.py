@@ -18,9 +18,9 @@ where0 = (6, 7)
 # where0 = (6, 7)
 # where1 = (7, 8)
 
-# site_num = 14
-# where0 = (6, 7)
-# where1 = (3, 6)
+site_num = 14
+where0 = (6, 7)
+where1 = (3, 6)
 
 fig, ax = plt.subplots(num="ShowModel")
 ax.set_axis_off()
