@@ -43,10 +43,10 @@ for index, point in enumerate(POINTS_COLLECTION):
     cell_index = CELL.getIndex(point, fold=True)
     if cell_index in (0, 10):
         color = "tab:red"
-        marker_size = 10
+        marker_size = 20
     else:
         color = "tab:green"
-        marker_size = 6
+        marker_size = 16
 
     ax.plot(
         point[0], point[1],
@@ -56,7 +56,7 @@ for index, point in enumerate(POINTS_COLLECTION):
         point[0], point[1],
         # str(index),
         str(cell_index),
-        ha="center", va="center", fontsize="xx-small", zorder=2, clip_on=True,
+        ha="center", va="center", fontsize="large", zorder=2, clip_on=True,
     )
 
 for ij in INTRA_HOPPING_INDICES:
@@ -64,19 +64,19 @@ for ij in INTRA_HOPPING_INDICES:
     ax.plot(
         bond[:, 0], bond[:, 1],
         # color="black",
-        ls="solid", lw=1.5, zorder=0
+        ls="solid", lw=3.0, zorder=0
     )
 for ij in INTER_HOPPING_INDICES:
     bond = POINTS_COLLECTION[ij]
     ax.plot(
         bond[:, 0], bond[:, 1],
         # color="tab:gray",
-        ls="dashed", lw=1.5, zorder=0
+        ls="dashed", lw=3.0, zorder=0
     )
 
 ax.set_axis_off()
 ax.set_aspect("equal")
 plt.get_current_fig_manager().window.showMaximized()
+plt.tight_layout()
 plt.show()
-fig.savefig(model + ".png", dpi=500, transparent=True)
 plt.close("all")
