@@ -113,8 +113,11 @@ def _ClusterRGFSolver0(HTerms, cluster, omegas, enum, eta):
     HM = _HMGenerator(HTerms, state_indices_table, basis)
     HM_P = _HMGenerator(HTerms, state_indices_table, basis_p)
     HM_H = _HMGenerator(HTerms, state_indices_table, basis_h)
+
     # noinspection PyTypeChecker
-    (GE, ), GS = eigsh(HM, k=1, which="SA")
+    values, vectors = eigsh(HM, k=1, which="SA")
+    GE = values[0]
+    GS = vectors[:, 0]
     del HM
 
     excited_states_p = {}
@@ -127,7 +130,7 @@ def _ClusterRGFSolver0(HTerms, cluster, omegas, enum, eta):
         excited_states_h[annihilator] = annihilator.matrix_repr(
             state_indices_table, basis, left_bases=basis_h
         ).dot(GS)
-    del state_indices_table, GS, basis, basis_p, basis_h
+    del state_indices_table, GS, vectors, basis, basis_p, basis_h
 
     projected_matrices_p, projected_vectors_p = HP.MultiKrylov(
         HM_P, excited_states_p
@@ -171,7 +174,9 @@ def _ClusterRGFSolver1(HTerms, cluster, omegas, enum, total_sz, eta):
 
     HM = _HMGenerator(HTerms, state_indices_table, basis)
     # noinspection PyTypeChecker
-    (GE, ), GS = eigsh(HM, k=1, which="SA")
+    values, vectors = eigsh(HM, k=1, which="SA")
+    GE = values[0]
+    GS = vectors[:, 0]
     del HM
 
     gfs_dict = {}
@@ -224,8 +229,9 @@ def _ClusterRGFSolver1(HTerms, cluster, omegas, enum, total_sz, eta):
         projected_matrices.update(projected_matrices_h)
 
         gfs_spin = HP.RGFSolverLanczosMultiple(
-            omegas, annihilators, creators, GE,
-            projected_matrices, projected_vectors,
+            omegas=omegas, As=annihilators, Bs=creators, GE=GE,
+            projected_matrices=projected_matrices,
+            projected_vectors=projected_vectors,
             eta=eta, structure="dict",
         )
         gfs_dict.update(gfs_spin)
@@ -234,7 +240,7 @@ def _ClusterRGFSolver1(HTerms, cluster, omegas, enum, total_sz, eta):
 
 def ClusterRGFSolver(
         HTerms, cluster, omegas, enum=None, total_sz=None,
-        eta=0.01, toarray=True,
+        eta=0.01, structure="array",
 ):
     point_num = cluster.point_num
     if enum is None:
@@ -252,7 +258,7 @@ def ClusterRGFSolver(
             HTerms, cluster, omegas, enum, total_sz, eta
         )
 
-    if toarray:
+    if structure == "array":
         creators = [
             HP.AoC(HP.CREATION, site, spin)
             for spin in SPINS for site in cluster.points
