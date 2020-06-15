@@ -1,8 +1,14 @@
+"""
+CPT study of the spin-1/2 Hubbard model defined on the triangular lattice
+with nearest-neighbor (NN) hoppings.
+"""
+
+
 import HamiltonianPy as HP
 import matplotlib.pyplot as plt
 import numpy as np
 
-from utilities import ClusterRGFSolver, CPTPerturbation, Fourier, Mu, SPINS
+from utilities import *
 
 DEFAULT_MODEL_PARAMETERS = {"t": -1.0, "U": 0.0}
 
@@ -72,7 +78,7 @@ def DOS(
     )
 
     dos = []
-    for index, cluster_gf in enumerate(cluster_gfs):
+    for cluster_gf in cluster_gfs:
         cpt_gfs = np.linalg.inv(np.linalg.inv(cluster_gf) - VMatrices)
         dos.append(np.mean(np.diagonal(cpt_gfs, axis1=1, axis2=2).imag, axis=0))
     dos = -np.array(dos) / np.pi
@@ -81,14 +87,14 @@ def DOS(
 
 if __name__ == "__main__":
     t = -1.0
-    U =  0.0
+    U = 0.0
 
     num0 = 3
     num1 = 3
     site_num = num0 * num1
 
     emin = -7.0
-    emax =  5.0
+    emax = 5.0
     step = 0.02
     omegas = np.arange(emin, emax + step, step)
 
@@ -99,12 +105,12 @@ if __name__ == "__main__":
     kpoints, indices = HP.KPath([Gamma, K, M])
     kpoint_num = kpoints.shape[0]
 
-    spectrum = EnergyBand(omegas, kpoints, num0=num0, num1=num1, U=U)
-    dos = DOS(omegas, num0=num0, num1=num1, U=U)
+    spectrum = EnergyBand(omegas, kpoints, num0=num0, num1=num1, t=t, U=U)
+    dos = DOS(omegas, num0=num0, num1=num1, t=t, U=U)
 
     total_dos = np.sum(dos, axis=1)
-    mu_p = Mu(total_dos, omegas, site_num, 2*site_num, reverse=False)
     mu_h = Mu(total_dos, omegas, site_num, 2*site_num, reverse=True)
+    mu_p = Mu(total_dos, omegas, site_num, 2*site_num, reverse=False)
     mu = (mu_p + mu_h) / 2
     print("mu_p = {0:.6f}".format(mu_p))
     print("mu_h = {0:.6f}".format(mu_h))
