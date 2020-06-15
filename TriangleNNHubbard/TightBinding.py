@@ -3,9 +3,9 @@ Nearest-neighbor tight-binding model defined on the triangular lattice.
 """
 
 
+import HamiltonianPy as HP
 import matplotlib.pyplot as plt
 import numpy as np
-from HamiltonianPy import lattice_generator, KPath
 
 from utilities import Lorentzian
 
@@ -19,9 +19,9 @@ def TightBinding(kpoints, cell, return_vectors=True, **model_params):
     Parameters
     ----------
     kpoints : 2D array with shape (N, 2)
-        A collection of points in reciprocal space.
+        A collection of k-points in reciprocal space.
     cell : Lattice
-        Unit cell of the model.
+        Unit cell of the triangle lattice.
     return_vectors : bool, optional
         Whether to return eigen-vectors.
         Default: True.
@@ -42,10 +42,13 @@ def TightBinding(kpoints, cell, return_vectors=True, **model_params):
     mu = actual_model_params["mu"] / 2
 
     terms = []
+    point_num = cell.point_num
+    dR = np.array([0.0, 0.0], dtype=np.float64)
     for point in cell.points:
         index = cell.getIndex(point, fold=False)
-        terms.append((2 * index, 2 * index, mu, np.array([0.0, 0.0])))
-        terms.append((2 * index + 1, 2 * index + 1, mu, np.array([0.0, 0.0])))
+        # Correspond to spin up and spin down, respectively
+        terms.append((index, index, mu, dR))
+        terms.append((index + point_num, index + point_num, mu, dR))
 
     intra_bonds, inter_bonds = cell.bonds(nth=1)
     for bond in intra_bonds + inter_bonds:
@@ -54,15 +57,15 @@ def TightBinding(kpoints, cell, return_vectors=True, **model_params):
         p1_eqv, dR1 = cell.decompose(p1)
         index0 = cell.getIndex(p0_eqv, fold=False)
         index1 = cell.getIndex(p1_eqv, fold=False)
-        terms.append((2 * index0, 2 * index1, t, dR1- dR0))
-        terms.append((2 * index0 + 1, 2 * index1 + 1, t, dR1 - dR0))
+        # Correspond to spin up and spin down, respectively
+        terms.append((index0, index1, t, dR1- dR0))
+        terms.append((index0 + point_num, index1 + point_num, t, dR1 - dR0))
 
-    point_num = cell.point_num
     shape = (kpoints.shape[0], 2 * point_num, 2 * point_num)
     HMs = np.zeros(shape, dtype=np.complex128)
     for i, j, coeff, dR in terms:
         HMs[:, i, j] += coeff * np.exp(1j * np.matmul(kpoints, dR))
-    HMs += np.transpose(HMs, (0, 2, 1)).conj()
+    HMs += np.transpose(HMs, axes=(0, 2, 1)).conj()
 
     if return_vectors:
         return np.linalg.eigh(HMs)
@@ -77,7 +80,7 @@ def TypicalSolver(cell, enum, numk=100, gamma=0.01, **model_params):
     Parameters
     ----------
     cell : Lattice
-        Unit cell of the tight-binding model.
+        Unit cell of the triangle lattice.
     enum : float or int
         The number of particle per unit-cell.
         The total particle number `numk * numk * enum` must be integer.
@@ -85,7 +88,7 @@ def TypicalSolver(cell, enum, numk=100, gamma=0.01, **model_params):
         The number of k-point along each translation vector in reciprocal space.
         Default: 100.
     gamma : float, optional
-        Specifying the width of the Lorentzian function
+        Specifying the width of the Lorentzian function.
         Default: 0.01.
     model_params : other keyword argument, optional
         Model parameters.
@@ -106,7 +109,7 @@ def TypicalSolver(cell, enum, numk=100, gamma=0.01, **model_params):
 
     total_particle_num = numk * numk * enum
     if total_particle_num != int(total_particle_num):
-        raise ValueError("The total number of particle must be integer!")
+        raise ValueError("Total number of particle must be integer!")
 
     ratio = np.linspace(0, 1, numk, endpoint=False)
     ratio_mesh = np.stack(
@@ -148,11 +151,11 @@ def TypicalSolver(cell, enum, numk=100, gamma=0.01, **model_params):
 
 
 if __name__ == "__main__":
-    cell = lattice_generator("triangle")
+    cell = HP.lattice_generator("triangle")
     M = cell.bs[0] / 2
     Gamma = np.array([0.0, 0.0])
     K = np.dot(np.array([2, 1]), cell.bs) / 3
-    kpoints, indices = KPath([Gamma, K, M])
+    kpoints, indices = HP.KPath([Gamma, K, M])
     GKMGEs = TightBinding(kpoints, cell, return_vectors=False)
     GE, EF, avg_particle_nums, omegas, projected_dos = TypicalSolver(
         cell, enum=1, numk=500, gamma=0.05,
@@ -179,5 +182,6 @@ if __name__ == "__main__":
     ax_DOS.grid(True, ls="dashed", color="gray")
 
     plt.get_current_fig_manager().window.showMaximized()
+    plt.tight_layout()
     plt.show()
     plt.close("all")
