@@ -1,9 +1,12 @@
 import logging
+import sys
 from time import time
 
 import HamiltonianPy as HP
+import matplotlib.pyplot as plt
 import numpy as np
 
+from database import POINTS, VECTORS
 from utilities import ClusterRGFSolver, CPTPerturbation, SPINS
 
 DEFAULT_MODEL_PARAMETERS = {
@@ -95,3 +98,40 @@ def DOS(
         t1 = time()
         logging.info("Time spend on %4dth omega: %.3fs", nth, t1 - t0)
     return -np.array(dos) / np.pi
+
+
+if __name__ == "__main__":
+    logging.basicConfig(
+        stream=sys.stdout, level=logging.INFO,
+        format="%(asctime)s - %(message)s",
+    )
+
+    cluster_points = np.append(POINTS, [[0.0, 1 / np.sqrt(3)]], axis=0)
+    cluster = HP.Lattice(cluster_points, VECTORS)
+
+    emin = -2.1
+    emax = 1.5
+    step = 0.01
+    omegas = np.arange(emin, emax + step, step)
+
+    M = cluster.bs[0] / 2
+    Gamma = np.array([0.0, 0.0])
+    K = np.dot(np.array([2, 1]), cluster.bs) / 3
+    kpoints, indices = HP.KPath([Gamma, K, M])
+
+    spectrum = EnergyBand(
+        omegas=omegas, cluster=cluster, kpoints=kpoints, enum=13, total_sz=0.5,
+    )
+
+    fig, ax = plt.subplots()
+    cs = ax.contourf(
+        range(kpoints.shape[0]), omegas, spectrum, cmap="hot", levels=500
+    )
+    fig.colorbar(cs, ax=ax)
+    ax.set_xticks(indices)
+    ax.set_ylim(emin, emax)
+    ax.set_xlim(0, kpoints.shape[0] - 1)
+    ax.grid(True, ls="dashed", color="gray")
+    ax.set_xticklabels([r"$\Gamma$", "K", "M", r"$\Gamma$"])
+    plt.show()
+    plt.close("all")
