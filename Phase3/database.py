@@ -52,11 +52,12 @@ if __name__ == "__main__":
             points = np.dot([i, j], TRANSLATION_VECTORS) + ALL_POINTS
             ax.plot(
                 points[:, 0], points[:, 1],
-                ls="", marker="o", markersize=5, zorder=1
+                ls="", marker="o", markersize=10, zorder=1
             )
 
     ax.set_axis_off()
     ax.set_aspect("equal")
     plt.get_current_fig_manager().window.showMaximized()
+    plt.tight_layout()
     plt.show()
     plt.close("all")
