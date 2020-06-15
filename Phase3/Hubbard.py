@@ -83,8 +83,12 @@ def TermsGenerator(cluster0, cluster1, model="Model1", **model_params):
 def RGFForCluster2(
         cluster0, cluster1, cluster2, HTerms0, HTerms1, VTerms, omegas, eta=0.01
 ):
-    gfs0 = ClusterRGFSolver(HTerms0, cluster0, omegas, eta=eta, toarray=False)
-    gfs1 = ClusterRGFSolver(HTerms1, cluster1, omegas, eta=eta, toarray=False)
+    gfs0 = ClusterRGFSolver(
+        HTerms0, cluster0, omegas, eta=eta, structure="dict",
+    )
+    gfs1 = ClusterRGFSolver(
+        HTerms1, cluster1, omegas, eta=eta, structure="dict",
+    )
 
     creators = [
         HP.AoC(HP.CREATION, site=point, spin=spin)
@@ -183,7 +187,7 @@ if __name__ == "__main__":
     model = "Model1"
 
     numk = 100
-    eta  = 0.02
+    eta  = 0.01
     emin = -4.0
     emax =  4.0
     step = 0.01
