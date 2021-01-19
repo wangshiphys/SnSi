@@ -28,7 +28,7 @@ if __name__ == "__main__":
     for i in [-1, 0, 1]:
         for j in [-1, 0, 1]:
             points = np.dot([i, j], VECTORS) + POINTS
-            ax.plot(points[:, 0], points[:, 1], ls="", marker="o", ms=10)
+            ax.plot(points[:, 0], points[:, 1], ls="", marker="o", ms=20)
     ax.set_axis_off()
     ax.set_aspect("equal")
 
@@ -36,4 +36,3 @@ if __name__ == "__main__":
     plt.tight_layout()
     plt.show()
     plt.close("all")
-
