@@ -130,3 +130,7 @@ dmypy.json
 
 # Pycharm configuration files
 .idea/
+
+# ignore data and figure folders
+fig/
+data/
