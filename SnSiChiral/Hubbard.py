@@ -8,6 +8,7 @@ import numpy as np
 from scipy.sparse.linalg import eigsh
 
 from database import POINTS, VECTORS
+from utilities import Mu
 
 logging.basicConfig(
     stream=sys.stdout, level=logging.INFO, format="%(asctime)s - %(message)s",
@@ -175,15 +176,19 @@ if __name__ == "__main__":
     model_params = {"model": "Model1", "t0": -1.00, "t1": -1.00, "U": 0.00}
     cluster, HTerms, VTerms = TermsGenerator(**model_params)
 
-    M = cluster.bs[0] / 2
-    K = np.dot(np.array([2, 1]), cluster.bs) / 3
-    kpoints, indices = HP.KPath([np.array([0.0, 0.0]), K, M])
+    numk = 200
+    ratio = np.linspace(0, 1, numk, endpoint=False)
+    ratio_mesh = np.stack(
+        np.meshgrid(ratio, ratio, indexing="ij"), axis=-1
+    ).reshape((-1, 2))
+    kpoints = np.matmul(ratio_mesh, cluster.bs)
+    del ratio, ratio_mesh
 
     eta = 0.05
     emin = -10.0
     emax = 10.0
     step = 0.01
-    omegas = np.arange(emin, emax, step)
+    omegas = np.arange(emin, emax + step, step)
 
     t0 = time()
     cluster_gfs = ClusterRGFSolver(HTerms, cluster, omegas, eta=eta)
@@ -195,33 +200,35 @@ if __name__ == "__main__":
     t1 = time()
     logging.info("Time spend on VMatrices: %.3fs", t1 - t0)
 
-    t0 = time()
-    final_gfs = []
-    for index, cluster_gf in enumerate(cluster_gfs):
-        start = time()
+    dos = []
+    for nth, cluster_gf in enumerate(cluster_gfs):
+        t0 = time()
         cpt_gfs = np.linalg.inv(np.linalg.inv(cluster_gf) - VMatrices)
-        final_gfs.append(np.trace(cpt_gfs, axis1=1, axis2=2))
-        end = time()
-        logging.info("index=%4dth, dt=%.3fs", index, end - start)
-    final_gfs = np.array(final_gfs) / cluster.point_num
-    t1 = time()
-    logging.info("Time spend on cpt and periodization: %.3fs", t1 - t0)
+        dos.append(np.mean(np.diagonal(cpt_gfs, axis1=1, axis2=2).imag, axis=0))
+        t1 = time()
+        logging.info("Time spend on %4dth omega: %.3fs", nth, t1 - t0)
+    dos = -np.array(dos) / np.pi
 
-    spectrum = -final_gfs.imag / np.pi
-    print(np.sum(spectrum, axis=0) * (omegas[1] - omegas[0]))
+    site_num = cluster.point_num
+    total_dos = np.sum(dos, axis=1)
+    mu_h = Mu(total_dos, omegas, site_num, 2 * site_num, reverse=True)
+    mu_p = Mu(total_dos, omegas, site_num, 2 * site_num, reverse=False)
+    mu = (mu_p + mu_h) / 2
+    particle_num = np.sum(total_dos[omegas < mu]) * step
+    local_particle_num = np.sum(dos[omegas < mu], axis=0) * step
+
+    print("Sum of DoS: {0:.8f}".format(np.sum(dos) * step))
+    print("mu_p = {0:.8f}, mu_h = {1:.8f}, mu = {2:.8f}".format(mu_p, mu_h, mu))
+    print("Particle number: {0:.8f}".format(particle_num))
+    for index in range(site_num):
+        num = local_particle_num[2*index] + local_particle_num[2*index+1]
+        print("Particle number on {0:0>2d}th site: {1:8f}".format(index, num))
 
     fig, ax = plt.subplots()
-    cs = ax.contourf(
-        range(len(kpoints)), omegas, spectrum, cmap="hot", levels=500
-    )
-    fig.colorbar(cs, ax=ax)
-
-    ax.set_xlim(0, kpoints.shape[0] - 1)
-    ax.set_xticks(indices)
-    ax.set_xticklabels([r"$\Gamma$", "K", "M", r"$\Gamma$"])
-    ax.tick_params(axis="both", labelsize="xx-large")
-    ax.grid(ls="dashed", lw=1.5, color="gray", axis="both")
-
+    ax.plot(omegas, total_dos, lw=4)
+    ax.set_xlim(emin, emax)
+    ax.axvline(mu, ls="dashed", color="tab:red", lw=1)
+    ax.grid(axis="both", ls="dashed", color="gray")
     plt.show()
     plt.close("all")
     logging.info("Program stop running")
