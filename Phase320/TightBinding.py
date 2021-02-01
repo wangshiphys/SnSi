@@ -9,52 +9,62 @@ from HamiltonianPy import Lattice, KPath
 from database import ALL_POINTS, TRANSLATION_VECTORS
 from utilities import Lorentzian
 
-DEFAULT_MODEL_PARAMETERS = {"t": -1.0, "mu0": 0.0, "mu1": 0.0}
-
-MODEL = "Model1"
-CELL = Lattice(ALL_POINTS[0:20], TRANSLATION_VECTORS)
-_ids = [
-    [0, 0], [-1, 0], [1, 0], [0, -1], [0, 1],
-    # [-1, -1], [-1, 1], [1, -1], [1, 1],
-]
-POINTS_COLLECTION = np.concatenate(
-    [np.dot([i, j], TRANSLATION_VECTORS) + ALL_POINTS[0:20] for i, j in _ids]
-)
-INTRA_HOPPING_INDICES = [
-    [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [0, 7], [0, 8], [0, 9],
-    [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9], [9, 1],
-    [10, 11], [10, 12], [10, 13], [10, 14],
-    [10, 15], [10, 16], [10, 17], [10, 18], [10, 19],
-    [11, 12], [12, 13], [13, 14], [14, 15],
-    [15, 16], [16, 17], [17, 18], [18, 19], [19, 11],
-    [6, 11],
-]
-INTER_HOPPING_INDICES = [[3, 37], [9, 74]]
-if MODEL == "Model2":
-    INTRA_HOPPING_INDICES += [[6, 12], [6, 19], [5, 11], [7, 11]]
-    INTER_HOPPING_INDICES += [
-        [3, 36], [3, 38], [2, 37], [4, 37], [9, 73], [9, 75], [1, 74], [8, 74],
-    ]
-ALL_HOPPING_INDICES = INTRA_HOPPING_INDICES + INTER_HOPPING_INDICES
+DEFAULT_MODEL_PARAMETERS = {"t0": -1.0, "t1": -1.0, "mu0": 0.0, "mu1": 0.0}
 
 
-def TightBinding(kpoints, cell, return_vectors=True, **model_params):
+def TightBinding(kpoints, model="Model1", return_vectors=True, **model_params):
     actual_model_params = dict(DEFAULT_MODEL_PARAMETERS)
     actual_model_params.update(model_params)
-    t = actual_model_params["t"]
+    t0 = actual_model_params["t0"]
+    t1 = actual_model_params["t1"]
     mu0 = actual_model_params["mu0"] / 2
     mu1 = actual_model_params["mu1"] / 2
 
+    ids = ([0, 0], [-1, 0], [1, 0], [0, -1], [0, 1])
+    cell = Lattice(ALL_POINTS[0:20], TRANSLATION_VECTORS)
+    points_collection = np.concatenate(
+        [np.dot(ij, TRANSLATION_VECTORS) + ALL_POINTS[0:20] for ij in ids]
+    )
+    intra_hopping_indices0 = [
+        [0, 1], [0, 2], [0, 3], [0, 4],
+        [0, 5], [0, 6], [0, 7], [0, 8], [0, 9],
+        [10, 11], [10, 12], [10, 13], [10, 14],
+        [10, 15], [10, 16], [10, 17], [10, 18], [10, 19],
+    ]
+    intra_hopping_indices1 = [
+        [1, 2], [2, 3], [3, 4], [4, 5],
+        [5, 6], [6, 7], [7, 8], [8, 9], [9, 1],
+        [11, 12], [12, 13], [13, 14], [14, 15],
+        [15, 16], [16, 17], [17, 18], [18, 19], [19, 11],
+        [6, 11]
+    ]
+    inter_hopping_indices = [[3, 37], [9, 74]]
+    if model == "Model2":
+        intra_hopping_indices1 += [[6, 12], [6, 19], [5, 11], [7, 11]]
+        inter_hopping_indices += [
+            [3, 36], [3, 38], [2, 37], [4, 37],
+            [9, 73], [9, 75], [1, 74], [8, 74],
+        ]
+
     terms = []
+    zero_dr = np.array([0.0, 0.0], dtype=np.float64)
     for point in cell.points:
         index = cell.getIndex(point, fold=False)
         mu = mu0 if index in (0, 10) else mu1
-        terms.append((2 * index, 2 * index, mu, np.array([0.0, 0.0])))
-        terms.append((2 * index + 1, 2 * index + 1, mu, np.array([0.0, 0.0])))
+        terms.append((2 * index, 2 * index, mu, zero_dr))
+        terms.append((2 * index + 1, 2 * index + 1, mu, zero_dr))
 
-    for ij in ALL_HOPPING_INDICES:
-        p0, p1 = POINTS_COLLECTION[ij]
-        coeff = t / np.dot(p1 - p0, p1 - p0)
+    for t, ijs in [(t0, intra_hopping_indices0), (t1, intra_hopping_indices1)]:
+        for ij in ijs:
+            p0, p1 = points_collection[ij]
+            coeff = t / np.dot(p1 - p0, p1 - p0)
+            index0 = cell.getIndex(p0, fold=False)
+            index1 = cell.getIndex(p1, fold=False)
+            terms.append((2 * index0, 2 * index1, coeff, zero_dr))
+            terms.append((2 * index0 + 1, 2 * index1 + 1, coeff, zero_dr))
+    for ij in inter_hopping_indices:
+        p0, p1 = points_collection[ij]
+        coeff = t1 / np.dot(p1 - p0, p1 - p0)
         p0_eqv, dR0 = cell.decompose(p0)
         p1_eqv, dR1 = cell.decompose(p1)
         index0 = cell.getIndex(p0_eqv, fold=False)
@@ -80,7 +90,9 @@ def TightBinding(kpoints, cell, return_vectors=True, **model_params):
         return np.linalg.eigvalsh(HMs)
 
 
-def TypicalSolver(cell, enum=None, numk=100, gamma=0.01, **model_params):
+def TypicalSolver(
+        cell, model="Model1", enum=None, numk=100, gamma=0.01, **model_params
+):
     if enum is None:
         enum = cell.point_num
 
@@ -96,7 +108,7 @@ def TypicalSolver(cell, enum=None, numk=100, gamma=0.01, **model_params):
     kpoint_num = kpoints.shape[0]
     del ratio, ratio_mesh
 
-    BZMeshEs, BZMeshVectors = TightBinding(kpoints, cell, **model_params)
+    BZMeshEs, BZMeshVectors = TightBinding(kpoints, model, **model_params)
     BZMeshEs = BZMeshEs.reshape((-1,))
     BZMeshProbs = np.transpose(
         (BZMeshVectors * BZMeshVectors.conj()).real, axes=(0, 2, 1)
@@ -128,14 +140,18 @@ def TypicalSolver(cell, enum=None, numk=100, gamma=0.01, **model_params):
 
 
 if __name__ == "__main__":
-    mu = 0.0
-    M = CELL.bs[0] / 2
-    K = np.dot(np.array([2, 1]), CELL.bs) / 3
+    cell = Lattice(ALL_POINTS[0:20], TRANSLATION_VECTORS)
+
+    M = cell.bs[0] / 2
+    K = np.dot(np.array([2, 1]), cell.bs) / 3
     kpoints, indices = KPath([np.array([0.0, 0.0]), K, M])
 
-    GKMGEs = TightBinding(kpoints, CELL, return_vectors=False, mu0=mu)
+    t0 = -1.0
+    t1 = -1.0
+    model = "Model1"
+    GKMGEs = TightBinding(kpoints, model, return_vectors=False, t0=t0, t1=t1)
     GE, mu, avg_particle_nums, omegas, projected_dos = TypicalSolver(
-        CELL, numk=100, gamma=0.01, mu0=mu
+        cell, model, numk=200, gamma=0.02, t0=t0, t1=t1
     )
 
     print("GE = {0}".format(GE))
@@ -180,8 +196,9 @@ if __name__ == "__main__":
     axes_dos_avg.grid(ls="dashed", color="gray", axis="both")
 
     plt.show()
-    # fig_EB.savefig(MODEL + "_EB.png", dpi=300, transparent=True)
-    # fig_dos0.savefig(MODEL + "_DOS0.png", dpi=300, transparent=True)
-    # fig_dos1.savefig(MODEL + "_DOS1.png", dpi=300, transparent=True)
-    # fig_dos_avg.savefig(MODEL + "_DOS_AVG.png", dpi=300, transparent=True)
+    prefix = "fig/{0}_t0={1:.3f}_t1={2:.3f}".format(model, t0, t1)
+    fig_EB.savefig(prefix + "_EB.png", transparent=True)
+    fig_dos0.savefig(prefix + "_DOS0.png", transparent=True)
+    fig_dos1.savefig(prefix + "_DOS1.png", transparent=True)
+    fig_dos_avg.savefig(prefix + "_DOS_AVG.png", transparent=True)
     plt.close("all")
