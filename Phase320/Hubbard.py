@@ -10,73 +10,97 @@ from database import ALL_POINTS, TRANSLATION_VECTORS
 from utilities import ClusterRGFSolver, CPTPerturbation, SPINS
 
 DEFAULT_MODEL_PARAMETERS = {
-    "t": -1.0, "mu0": 0.0, "mu1": 0.0, "U0": 0.0, "U1": 0.0,
+    "t0": -1.0, "t1": -1.0, "mu0": 0.0, "mu1": 0.0, "U0": 0.0, "U1": 0.0,
 }
 
 
-def TermsGenerator(cluster0, cluster1, model="Model1", **model_params):
+def TermsGenerator(model="Model1", **model_params):
     actual_model_params = dict(DEFAULT_MODEL_PARAMETERS)
     actual_model_params.update(model_params)
-    t = actual_model_params["t"]
+    t0 = actual_model_params["t0"]
+    t1 = actual_model_params["t1"]
     U0 = actual_model_params["U0"] / 2
     U1 = actual_model_params["U1"] / 2
     mu0 = actual_model_params["mu0"] / 2
     mu1 = actual_model_params["mu1"] / 2
 
+    ids = ([0, 0], [-1, 0], [1, 0], [0, -1], [0, 1])
+    points_collection = np.concatenate(
+        [np.dot(ij, TRANSLATION_VECTORS) + ALL_POINTS[0:20] for ij in ids]
+    )
+
     HTerms0 = []
     HTerms1 = []
-    hopping_indices = [
-        [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [0, 7], [0, 8], [0, 9],
-        [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9], [9, 1],
-    ]
-    for container, cluster in [(HTerms0, cluster0), (HTerms1, cluster1)]:
-        for point in cluster.points:
-            point_index = cluster.getIndex(point, fold=False)
-            U, mu = (U0, mu0) if point_index == 0 else (U1, mu1)
-            container.append(HP.HubbardFactory(site=point, coeff=U))
-            container.append(HP.CPFactory(point, spin=HP.SPIN_UP, coeff=mu))
-            container.append(HP.CPFactory(point, spin=HP.SPIN_DOWN, coeff=mu))
-        for ij in hopping_indices:
-            p0, p1 = cluster.points[ij]
-            coeff = t / np.dot(p1 - p0, p1 - p0)
-            for spin in SPINS:
-                container.append(
-                    HP.HoppingFactory(p0, p1, spin0=spin, coeff=coeff)
-                )
+    for index in range(10):
+        point = points_collection[index]
+        U, mu = (U0, mu0) if index == 0 else (U1, mu1)
+        if U != 0:
+            HTerms0.append(HP.HubbardFactory(site=point, coeff=U))
+        if mu != 0:
+            HTerms0.append(HP.CPFactory(point, spin=HP.SPIN_UP, coeff=mu))
+            HTerms0.append(HP.CPFactory(point, spin=HP.SPIN_DOWN, coeff=mu))
+    for index in range(10, 20):
+        point = points_collection[index]
+        U, mu = (U0, mu0) if index == 10 else (U1, mu1)
+        if U != 0:
+            HTerms1.append(HP.HubbardFactory(site=point, coeff=U))
+        if mu != 0:
+            HTerms1.append(HP.CPFactory(point, spin=HP.SPIN_UP, coeff=mu))
+            HTerms1.append(HP.CPFactory(point, spin=HP.SPIN_DOWN, coeff=mu))
 
-    if model == "Model1":
-        hopping0_indices = [[6, 1]]
-        hopping1_indices = [[3, 7]]
-        hopping2_indices = [[9, 4]]
-    elif model == "Model2":
-        hopping0_indices = [[6, 1], [6, 2], [6, 9], [5, 1], [7, 1]]
-        hopping1_indices = [[3, 7], [3, 6], [3, 8], [2, 7], [4, 7]]
-        hopping2_indices = [[9, 4], [9, 3], [9, 5], [1, 4], [8, 4]]
-    else:
-        raise ValueError("Invalid `model`: {0}".format(model))
+    for ij in [
+        [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [0, 7], [0, 8], [0, 9]
+    ]:
+        p0, p1 = points_collection[ij]
+        coeff = t0 / np.dot(p1 - p0, p1 - p0)
+        for spin in SPINS:
+            HTerms0.append(HP.HoppingFactory(p0, p1, spin0=spin, coeff=coeff))
+    for ij in [
+        [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9], [9, 1]
+    ]:
+        p0, p1 = points_collection[ij]
+        coeff = t1 / np.dot(p1 - p0, p1 - p0)
+        for spin in SPINS:
+            HTerms0.append(HP.HoppingFactory(p0, p1, spin0=spin, coeff=coeff))
+
+    for ij in [
+        [10, 11], [10, 12], [10, 13], [10, 14],
+        [10, 15], [10, 16], [10, 17], [10, 18], [10, 19],
+    ]:
+        p0, p1 = points_collection[ij]
+        coeff = t0 / np.dot(p1 - p0, p1 - p0)
+        for spin in SPINS:
+            HTerms1.append(HP.HoppingFactory(p0, p1, spin0=spin, coeff=coeff))
+    for ij in [
+        [11, 12], [12, 13], [13, 14], [14, 15],
+        [15, 16], [16, 17], [17, 18], [18, 19], [19, 11],
+    ]:
+        p0, p1 = points_collection[ij]
+        coeff = t1 / np.dot(p1 - p0, p1 - p0)
+        for spin in SPINS:
+            HTerms1.append(HP.HoppingFactory(p0, p1, spin0=spin, coeff=coeff))
 
     VTerms0 = []
-    for i, j in hopping0_indices:
-        p0 = cluster0.points[i]
-        p1 = cluster1.points[j]
-        coeff = t / np.dot(p1 - p0, p1 - p0)
+    VTerms1 = []
+    inter_hopping_indices0 = [[6, 11]]
+    inter_hopping_indices1 = [[3, 37], [9, 74]]
+    if model == "Model2":
+        inter_hopping_indices0 += [[6, 12], [6, 19], [5, 11], [7, 11]]
+        inter_hopping_indices1 += [
+            [3, 36], [3, 38], [2, 37], [4, 37],
+            [9, 73], [9, 75], [1, 74], [8, 74],
+        ]
+    for ij in inter_hopping_indices0:
+        p0, p1 = points_collection[ij]
+        coeff = t1 / np.dot(p1 - p0, p1 - p0)
         for spin in SPINS:
             VTerms0.append(HP.HoppingFactory(p0, p1, spin0=spin, coeff=coeff))
+    for ij in inter_hopping_indices1:
+        p0, p1 = points_collection[ij]
+        coeff = t1 / np.dot(p1 - p0, p1 - p0)
+        for spin in SPINS:
+            VTerms1.append(HP.HoppingFactory(p0, p1, spin0=spin, coeff=coeff))
 
-    VTerms1 = []
-    temp = [
-        (hopping1_indices, cluster1.points - cluster1.vectors[0]),
-        (hopping2_indices, cluster1.points - cluster1.vectors[1]),
-    ]
-    for indices, points in temp:
-        for i, j in indices:
-            p0 = cluster0.points[i]
-            p1 = points[j]
-            coeff = t / np.dot(p1 - p0, p1 - p0)
-            for spin in SPINS:
-                VTerms1.append(
-                    HP.HoppingFactory(p0, p1, spin0=spin, coeff=coeff)
-                )
     return HTerms0, HTerms1, VTerms0, VTerms1
 
 
@@ -122,25 +146,23 @@ def EnergyBand(
         omegas, kpoints, cluster0, cluster1, cluster2,
         eta=0.01, model="Model1", **model_params
 ):
-    HTerms0, HTerms1, VTerms0, VTerms1 = TermsGenerator(
-        cluster0, cluster1, model, **model_params
-    )
+    HTerms0, HTerms1, VTerms0, VTerms1 = TermsGenerator(model, **model_params)
     VMatrices = CPTPerturbation(VTerms1, cluster2, kpoints)
 
-    t0 = time()
+    start = time()
     cluster2_gfs = RGFForCluster2(
         cluster0, cluster1, cluster2, HTerms0, HTerms1, VTerms0, omegas, eta
     )
-    t1 = time()
-    logging.info("Time spend on cluster2_gfs: %.3fs", t1 - t0)
+    end = time()
+    logging.info("Time spend on cluster2_gfs: %.3fs", end - start)
 
     spectrum = []
     for nth, VMatrix in enumerate(VMatrices):
-        t0 = time()
+        start = time()
         cpt_gfs = np.linalg.inv(np.linalg.inv(cluster2_gfs) - VMatrix)
         spectrum.append(np.trace(cpt_gfs, axis1=1, axis2=2).imag)
-        t1= time()
-        logging.info("Time spend %4dth VMatrix: %.3fs", nth, t1 - t0)
+        end = time()
+        logging.info("Time spend %4dth VMatrix: %.3fs", nth, end - start)
     return -np.array(spectrum).T / np.pi
 
 
@@ -155,25 +177,23 @@ def DOS(
     kpoints = np.matmul(ratio_mesh, cluster2.bs)
     del ratio, ratio_mesh
 
-    HTerms0, HTerms1, VTerms0, VTerms1 = TermsGenerator(
-        cluster0, cluster1, model, **model_params
-    )
+    HTerms0, HTerms1, VTerms0, VTerms1 = TermsGenerator(model, **model_params)
     VMatrices = CPTPerturbation(VTerms1, cluster2, kpoints)
 
-    t0 = time()
+    start = time()
     cluster2_gfs = RGFForCluster2(
         cluster0, cluster1, cluster2, HTerms0, HTerms1, VTerms0, omegas, eta
     )
-    t1 = time()
-    logging.info("Time spend on cluster2_gfs: %.3fs", t1 - t0)
+    end = time()
+    logging.info("Time spend on cluster2_gfs: %.3fs", end - start)
 
     dos = []
     for nth, cluster2_gf in enumerate(cluster2_gfs):
-        t0 = time()
+        start = time()
         cpt_gfs = np.linalg.inv(np.linalg.inv(cluster2_gf) - VMatrices)
         dos.append(np.mean(np.diagonal(cpt_gfs, axis1=1, axis2=2).imag, axis=0))
-        t1 = time()
-        logging.info("Time spend on %4dth omega: %.3fs", nth, t1 - t0)
+        end = time()
+        logging.info("Time spend on %4dth omega: %.3fs", nth, end - start)
     return -np.array(dos) / np.pi
 
 
@@ -183,13 +203,13 @@ if __name__ == "__main__":
         format="%(asctime)s - %(message)s",
     )
 
-    U0 = U1 = 0.0
+    t0 = -1.00
+    t1 = -1.00
     model = "Model1"
 
-    numk = 100
     eta  = 0.01
-    emin = -4.0
-    emax =  4.0
+    emin = -3.3
+    emax = 2.3
     step = 0.01
     omegas = np.arange(emin, emax + step, step)
 
@@ -197,18 +217,25 @@ if __name__ == "__main__":
     cluster1 = HP.Lattice(ALL_POINTS[10:20], TRANSLATION_VECTORS)
     cluster2 = HP.Lattice(ALL_POINTS[0:20], TRANSLATION_VECTORS)
 
-    dos = DOS(
-        omegas, cluster0, cluster1, cluster2,
-        numk=numk, eta=eta, model=model, U0=U0, U1=U1
+    M = cluster2.bs[0] / 2
+    K = np.dot(np.array([2, 1]), cluster2.bs) / 3
+    kpoints, indices = HP.KPath([np.array([0.0, 0.0]), K, M])
+    kpoint_num = kpoints.shape[0]
+
+    spectrum = EnergyBand(
+        omegas, kpoints, cluster0, cluster1, cluster2,
+        eta=eta, model=model, t0=t0, t1=t1,
     )
-    sum_dos = np.sum(dos) * step
-    print("Sum of DoS: {0}".format(sum_dos), flush=True)
 
     fig, ax = plt.subplots()
-    ax.plot(omegas, np.sum(dos, axis=1))
-    ax.set_xlim(emin, emax)
-    ax.set_xlabel(r"$\omega$")
-    ax.set_ylabel("DoS(a.u.)")
-    ax.grid()
+    cs = ax.contourf(
+        range(kpoint_num), omegas, spectrum, cmap="hot", levels=200,
+    )
+    fig.colorbar(cs, ax=ax)
+    ax.set_xticks(indices)
+    ax.set_ylim(emin, emax)
+    ax.set_xlim(0, kpoints.shape[0] - 1)
+    ax.grid(True, ls="dashed", color="gray")
+    ax.set_xticklabels([r"$\Gamma$", "K", "M", r"$\Gamma$"])
     plt.show()
     plt.close("all")
