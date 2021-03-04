@@ -1,0 +1,34 @@
+\documentclass[aps,prl,reprint,amsfonts,amsmath,amssymb,showpacs,groupedaddress,superscriptaddress,onecolumn]{revtex4-1}
+\usepackage{bm}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage[colorlinks,urlcolor=blue,linkcolor=blue,anchorcolor=blue,citecolor=blue,bookmarks]{hyperref}
+
+\begin{document}
+\title{Theoretical Formalism}
+
+\date{\today}
+
+\maketitle
+
+To have a better understading of the experimental observations, we construct single-band Hubbard model with renormalized hopping coefficients to describe these systems and calculate the local density of states by using cluster perturbation theory (CPT)~\cite{PhysRevB.48.418,PhysRevLett.84.522}.
+
+To have a better understanding of the experimental observations, we adopt the single-band Hubbard model with modulated hopping coefficients and use cluster perturbation theory (CPT)\cite{PhysRevB.48.418,PhysRevLett.84.522} to calculate the spectral function as well as density of states of the model Hamiltonians. For the $(3\sqrt{7} \times 3\sqrt{7})R19.1^\circ$ surface (referred to as Phase 1 in the following), the STM topographic image are shown in Fig.~\ref{fig:STMTopographicImage}(a) and Fig.~\ref{fig:STMTopographicImage}(d). Based on the proposed atomic structural shown in Fig.~\ref{fig:STMTopographicImage}(g), we constructed a single-band Hubbard model with modulated hopping coefficients to describe the system. The model Hamiltonian takes the following form:
+\begin{equation}
+    H = \sum_{<i,j>\sigma} t_{ij}(c_{i\sigma}^{\dagger}c_{j\sigma} + \text{H.c.}) + U \sum_{i} n_{i\uparrow} n_{i\downarrow}
+    \label{eq:ModelHamiltonian}
+\end{equation}
+
+\begin{figure}
+    \includegraphics[width=0.8\columnwidth]{STMTopographicImage.png}
+    \caption{\label{fig:STMTopographicImage}(Color online) STM characterization of three new superstructures of Sn sub-monolayers on Si(111). (a)-(c) Large-scale STM image (size: 100 $\times$ 100 nm$^2$) taken on $(3\sqrt{7} \times 3\sqrt{7})R19.1^\circ$, $(\sqrt{133} \times 4\sqrt{3})$ and $(13 \times 13)$ surfaces. They are taken at $U = +3.5V$, $U = -2V$ and $U = -2V$ ($I_{t} = 100pA$) respectively. (d)-(f) The atomically resolved STM images of them taken at $U = -2V, I_{t} = 200pA$. The surface unit cells of them are marked in black. (g)-(i) The corresponding proposed atomic structural models. The marked surface unit cells in (g)-(i) are the same as these in (d)-(f).}
+\end{figure}
+
+\begin{figure}
+    \includegraphics[width=0.8\columnwidth]{ModelForPhase1.pdf}
+    \caption{\label{fig:ModelForPhase1} (Color online) Demonstration of the hopping terms for Phase 1. The unit cell has twenty sites labeled from 0 to 19. The soild and dashed lines correspond to the hopping terms $t_{ij} (c_{i\sigma}^{\dagger} c_{j\sigma} + \text{H.c.})$, where $t_{ij} = -1/r_{ij}^{2}$ and $r_{ij}$ is the distance from $i$-th to $j$-th site.}
+\end{figure}
+
+\bibliography{TheoreticalFormalism}
+
+\end{document}
