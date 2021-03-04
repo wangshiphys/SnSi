@@ -24,7 +24,8 @@ where $t_{ij}$ is the effective hopping amplitude and $U$ the effective on-site 
 
 For this model Hamiltonian, we first consider the non-interacting case (\textit{i.e.,} $U = 0$) which can be diagonalized exactly. The averaged DOS and representative LDOS are shown in Fig.~\ref{fig:TBAForPhase1}. It can be clearly seen from the averaged DOS that the system has an energy gap of $\sim 0.55t$. However, the LDOS varies from site to site. For instance, the LDOS of the site labeled as ``0'' is quite different from the sites labeled as ``1'', ``2'' and ``3''. Especially, the energy gap at the zeroth site is $\sim 3.2t$, and yet that at other sites is $\sim 0.55t$. This inhomogeneous LDOS is obviously contradictory to the experimental uniform insulating gap. We further include on-site Coulomb repulsion and use CPT to calculate the LDOS. The evolution of the averaged DOS with U is shown in Fig.~\ref{fig:CPTForPhase1}. The energy gap becomes gradually decreased when taking into account of Hubbard-$U$ and a transition from band insulator to metal is identified at $U \approx 3.5t$. As we further increase $U$, an energy gap is reopened, indicating a metal-insulator transition. The including of $U = 6t$ leads to an experimentally comparable large energy gap of $\sim 2.31\text{eV}$. We further explored the corresponding LDOS and found that the energy gap is uniform at each lattice sites from 0 to 19 (see Fig.~\ref{fig:CPTForPhase1LDOS}), which is consistent with the experimentally observed homengeneous dI/dV spectra. The agreement between the experimental observation and theoretical calculation indicates the Mott origin of the large energy gap of $\sim 2.5\text{eV}$ for $(3\sqrt{7} \times 3\sqrt{7})R19.1^\circ$ surface.
 
-For $(\sqrt{133} \times 4\sqrt{3})$ and $(13 \times 13)$ surfaces (referred to as Phase 2 and Phase 3 respectively), we similarly constructed the simplified model for theoretical calculations.
+For $(\sqrt{133} \times 4\sqrt{3})$ and $(13 \times 13)$ surfaces (referred to as Phase 2 and Phase 3 respectively), we similarly constructed the simplified model for theoretical calculations. Considering the substrate Si atoms form triangular lattice and the surface Sn atoms form well-ordered superstructures,we constructed Hubbard model on triangular lattice with uniformly dirtributed extra points to describe Phase 2 and Phase 3. We only consider the hopping terms between nearest-neighbor triangular lattice sites as well as the hopping terms between extra points and its' nearest neighbors. The corresponding tight-bingding model is shown in Fig.~\ref{fig:ModelForPhase2andPhase3} and the red circle correspond to the extra point. For the non-interacting part, even though the unit cell contains odd number of electrons at half-filling, the band structure and the calculated DOS indicate their metallic state with non-vanishing DOS near $E_{F}$. We further calculate the DOS of the corresponding Hubbard model by using CPT and the evolution of DOS with Hubbard-$U$ is shown in Fig.~\ref{fig:CPTForPhase2andPhase3}. With the inclusion of Hubbard-$U$, the system undergoes an metal-insulator transition at $U \approx 2t$. When we further increase $U$ to $6t$ to be consistent with the value of Phase 1, the Mott gap is about $3.84t$. The calculated gap size of
+Phase 2 and Phase3 is larger than the gap size of Phase 1, which is qualitatively consistent the experimental onservation. Due to the fact that the actual atomic arrangements are slightly deviated from the proposed model, we introduce randomness on the hopping amplitude to study the influence of deviations of the atomic positions, i.e., we set the hopping coefficients $t_{ij} = -A / r_{ij}$ where $r_{ij}$ is the distance between the $i$-th and $j$-th lattice sites and $A$ is random number. We can set the hopping amplitude to be in different range and the corresponding DOS are shown in Fig.~\ref{fig:CPTForPhase2andPhase3Random}. It can be seen from Fig.~\ref{fig:CPTForPhase2andPhase3Random}, random sampling of hopping amplitude $A$ only has sightly influence on the resulting DOS which implies that the tiny influence of the deviation of the atomic positions. In addition, the theoretical calculations of the LDOS with $U = 6t$ at different lattice sites show the constant Mott gap, same as the uniform dI/dV spectra obseraved experimentally. The good agreements furhter confirm these two superstructures are also large-gap Mott insulators.
 
 
 \begin{figure}[p]
@@ -52,6 +53,21 @@ For $(\sqrt{133} \times 4\sqrt{3})$ and $(13 \times 13)$ surfaces (referred to a
     \includegraphics[width=0.8\columnwidth]{CPTForPhase1LDOS0.pdf}
     \includegraphics[width=0.8\columnwidth]{CPTForPhase1LDOS1.pdf}
     \caption{\label{fig:CPTForPhase1LDOS} Local density of states at $U = 6t$.}
+\end{figure}
+
+\begin{figure}[p]
+    \includegraphics[width=0.8\columnwidth]{ModelForPhase2andPhase3.pdf}
+    \caption{\label{fig:ModelForPhase2andPhase3} (Color online) Demonstration of the tight-binding model for Phase 2 and Phase 3. The soild and dashed lines correspond to the hopping terms $t_{ij} (c_{i\sigma}^{\dagger} c_{j\sigma} + \text{H.c.})$, where $t_{ij} = -1/r_{ij}^{2}$ and $r_{ij}$ is the distance from $i$-th to $j$-th site.}
+\end{figure}
+
+\begin{figure}[p]
+    \includegraphics[width=0.8\columnwidth]{CPTForPhase2andPhase3.pdf}
+    \caption{\label{fig:CPTForPhase2andPhase3} (Color online) The evolution of averaged DOS with Hubbard-$U$.}
+\end{figure}
+
+\begin{figure}
+    \includegraphics[width=0.8\columnwidth]{CPTForPhase2andPhase3Random.pdf}
+    \caption{\label{fig:CPTForPhase2andPhase3Random} (Color Online) DOS at $U = 6t$ with random hopping amplitude.}
 \end{figure}
 
 \appendix
