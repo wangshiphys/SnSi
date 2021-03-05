@@ -131,9 +131,16 @@ dmypy.json
 # Pycharm configuration files
 .idea/
 
-# ignore doc folder
-doc/
 
-# ignore data and figure folders
-fig/
-data/
+# Some files to ignore
+doc/References/
+Phase12Center/fig/
+Phase12Center/data/
+Phase12Line/fig/
+Phase12Line/data/
+Phase320/fig/
+Phase320/data/
+Phase323/fig/
+Phase323/data/
+SnSiChiral/fig/
+SnSiChiral/data/
