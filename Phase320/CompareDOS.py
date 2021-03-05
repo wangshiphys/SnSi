@@ -4,19 +4,34 @@ import numpy as np
 from utilities import Mu
 
 site_num = 20
-dos_data_name_temp = "data/dos/Phase320_t=-1.00_U={0:.2f}.npz"
+dos_data_path = "data/dos/"
+dos_data_name_temp = "Phase320_{model}_t0={t0:.3f}_t1={t1:.3f}_U={U:.3f}.npz"
+
+ids = [
+    {"model": "Model1", "t1":-1.00, "t0": -0.00, "U": 6.00},
+    {"model": "Model1", "t1":-1.00, "t0": -0.10, "U": 6.00},
+    {"model": "Model1", "t1":-1.00, "t0": -0.20, "U": 6.00},
+    {"model": "Model1", "t1":-1.00, "t0": -0.30, "U": 6.00},
+    {"model": "Model1", "t1":-1.00, "t0": -0.40, "U": 6.00},
+    {"model": "Model1", "t1":-1.00, "t0": -0.50, "U": 6.00},
+    {"model": "Model1", "t1":-1.00, "t0": -0.60, "U": 6.00},
+    {"model": "Model1", "t1":-1.00, "t0": -0.70, "U": 6.00},
+    {"model": "Model1", "t1":-1.00, "t0": -0.80, "U": 6.00},
+    {"model": "Model1", "t1":-1.00, "t0": -0.90, "U": 6.00},
+    {"model": "Model1", "t1":-1.00, "t0": -1.00, "U": 6.00},
+]
 
 lines = []
 labels = []
 yticks = []
 baseline = 0.0
 interval = 0.8
-Us = np.arange(0.0, 10, 0.5)
 
 fig, ax = plt.subplots()
-for U in Us:
+for id in ids:
+    dos_data_name = dos_data_path + dos_data_name_temp.format(**id)
     try:
-        with np.load(dos_data_name_temp.format(U)) as ld:
+        with np.load(dos_data_name) as ld:
             dos = ld["dos"]
             omegas = ld["omegas"]
     except Exception:
@@ -38,15 +53,15 @@ for U in Us:
     line, = ax.plot(omegas - mu, avg_dos + baseline, lw=2)
     lines.append(line)
     yticks.append(baseline)
-    labels.append("U={0:.1f}".format(U))
+    labels.append("t0={t0:.2f}".format(**id))
     baseline += interval
 ax.set_yticks(yticks)
 ax.grid(axis="y", ls="dashed", color="gray")
 ax.axvline(0, ls="dashed", color="gray", lw=2.0, zorder=0)
-ax.legend(lines[::-1], labels[::-1], loc="lower right", fontsize=15)
-ax.set_xlabel(r"$\omega$", fontsize=20)
-ax.set_ylabel(r"DOS (arb. units)", fontsize=20)
-ax.tick_params(axis="both", labelsize=15)
+ax.legend(lines[::-1], labels[::-1], loc="lower right", fontsize=8)
+ax.set_xlabel(r"$\omega$", fontsize=8)
+ax.set_ylabel(r"DOS (arb. units)", fontsize=8)
+ax.tick_params(axis="both", labelsize=8)
 
 plt.get_current_fig_manager().window.showMaximized()
 plt.show()
