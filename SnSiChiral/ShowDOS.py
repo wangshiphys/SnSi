@@ -4,8 +4,8 @@ import numpy as np
 from utilities import Mu
 
 site_num = 12
-data_name = "data/DOS_{model}_t0={t0:.3f}_t1={t1:.3f}_U={U:.3f}.npz".format(
-    model="Model1", t0=-1.00, t1=-1.00, U=0.00
+data_name = "data/dos/DOS_{model}_t0={t0:.3f}_t1={t1:.3f}_U={U:.3f}.npz".format(
+    model="Model1", t0=-1.00, t1=-0.50, U=6.00
 )
 with np.load(data_name) as ld:
     dos = ld["dos"]
