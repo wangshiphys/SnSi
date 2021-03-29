@@ -102,7 +102,7 @@ for ij in intra_hopping_indices0:
     bond = points_collection[ij]
     line0, = ax.plot(
         bond[:, 0], bond[:, 1], color="tab:red",
-        ls="solid", lw=4.0, zorder=0
+        ls="solid", lw=5.0, zorder=0
     )
 for ij in intra_hopping_indices1:
     bond = points_collection[ij]
@@ -125,7 +125,8 @@ ax.set_xlim(-4.5, 9.0)
 ax.set_ylim(-2.0, 10.0)
 ax.set_axis_off()
 ax.set_aspect("equal")
-plt.get_current_fig_manager().window.showMaximized()
+fig.set_size_inches(9.60, 9.36)
 plt.tight_layout()
 plt.show()
+fig.savefig("fig/Model.pdf", transparent=True)
 plt.close("all")
