@@ -45,7 +45,7 @@ else:
 
 lw = 5
 ms = 25
-fontsize = 15
+fontsize = 18
 colors = plt.get_cmap("tab10")(range(7))
 fig, ax = plt.subplots(num=model)
 for index, point in enumerate(POINTS_COLLECTION):
@@ -61,45 +61,31 @@ for index, point in enumerate(POINTS_COLLECTION):
 
 for ij in INTRA_HOPPING_INDICES0:
     bond = POINTS_COLLECTION[ij]
-    ax.plot(
+    line0, = ax.plot(
         bond[:, 0], bond[:, 1], ls="solid", lw=lw, color="tab:red", zorder=0
     )
 for ij in INTRA_HOPPING_INDICES1:
     bond = POINTS_COLLECTION[ij]
-    ax.plot(
+    line1, = ax.plot(
         bond[:, 0], bond[:, 1],
         ls="dashed", lw=lw/2, color="tab:green", zorder=0
     )
 for ij in INTER_HOPPING_INDICES:
     bond = POINTS_COLLECTION[ij]
-    ax.plot(
+    line2, = ax.plot(
         bond[:, 0], bond[:, 1], ls="dotted", lw=lw/2, color="gray", zorder=0
     )
-
-x0, y0 = POINTS_COLLECTION[2]
-x1, y1 = POINTS_COLLECTION[10]
-ax.text(
-    (x0 + x1) / 2, (y0 + y1) / 2, "t$_0$", color="tab:red",
-    va="bottom", ha="center", fontsize=fontsize+6
-)
-x0, y0 = POINTS_COLLECTION[0]
-x1, y1 = POINTS_COLLECTION[1]
-ax.text(
-    (x0 + x1) / 2, (y0 + y1) / 2, "t$_1$", color="tab:green",
-    va="bottom", ha="center", fontsize=fontsize+6
-)
-x0, y0 = POINTS_COLLECTION[6]
-x1, y1 = POINTS_COLLECTION[81]
-ax.text(
-    (x0 + x1) / 2, (y0 + y1) / 2, "t$_1$", color="gray",
-    va="bottom", ha="center", fontsize=fontsize+6
+ax.legend(
+    [line0, line1, line2], ["$t_0$", "$t_1$", "$t_1$"],
+    bbox_to_anchor=(0.70, 0.80), bbox_transform=ax.transAxes,
+    loc="lower left", fontsize=30, labelspacing=0.15, borderpad=0.15
 )
 
 ax.set_axis_off()
 ax.set_aspect("equal")
-fig.set_size_inches(8.7, 9.26)
+fig.set_size_inches(9.36, 9.36)
 plt.tight_layout()
 plt.show()
 Path("fig/Model/").mkdir(exist_ok=True, parents=True)
-# fig.savefig("fig/Model/" + model + ".png", transparent=True)
+fig.savefig("fig/Model/" + model + ".pdf", transparent=True)
 plt.close("all")
