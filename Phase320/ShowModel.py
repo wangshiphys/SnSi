@@ -102,19 +102,19 @@ for ij in intra_hopping_indices0:
     bond = points_collection[ij]
     line0, = ax.plot(
         bond[:, 0], bond[:, 1], color="tab:red",
-        ls="solid", lw=5.0, zorder=0
+        ls="solid", lw=3.0, zorder=0
     )
 for ij in intra_hopping_indices1:
     bond = points_collection[ij]
     line1, = ax.plot(
         bond[:, 0], bond[:, 1], color="tab:blue",
-        ls="solid", lw=4.0, zorder=0
+        ls="solid", lw=5.0, zorder=0
     )
 for ij in inter_hopping_indices:
     bond = points_collection[ij]
     line2, = ax.plot(
         bond[:, 0], bond[:, 1], color="tab:blue",
-        ls="dashed", lw=4.0, zorder=0
+        ls="dotted", lw=5.0, zorder=0
     )
 ax.legend(
     [line0, line1, line2], ["$t_0$", "$t_1$", "$t_1$"],
