@@ -43,7 +43,6 @@ else:
     ]
 
 
-lw = 5
 ms = 25
 fontsize = 18
 colors = plt.get_cmap("tab10")(range(7))
@@ -62,18 +61,18 @@ for index, point in enumerate(POINTS_COLLECTION):
 for ij in INTRA_HOPPING_INDICES0:
     bond = POINTS_COLLECTION[ij]
     line0, = ax.plot(
-        bond[:, 0], bond[:, 1], ls="solid", lw=lw, color="tab:red", zorder=0
+        bond[:, 0], bond[:, 1], ls="solid", lw=5.0, color="tab:red", zorder=0
     )
 for ij in INTRA_HOPPING_INDICES1:
     bond = POINTS_COLLECTION[ij]
     line1, = ax.plot(
         bond[:, 0], bond[:, 1],
-        ls="dashed", lw=lw/2, color="tab:green", zorder=0
+        ls="dashed", lw=3.0, color="tab:green", zorder=0
     )
 for ij in INTER_HOPPING_INDICES:
     bond = POINTS_COLLECTION[ij]
     line2, = ax.plot(
-        bond[:, 0], bond[:, 1], ls="dotted", lw=lw/2, color="gray", zorder=0
+        bond[:, 0], bond[:, 1], ls="dotted", lw=3.0, color="gray", zorder=0
     )
 ax.legend(
     [line0, line1, line2], ["$t_0$", "$t_1$", "$t_1$"],
