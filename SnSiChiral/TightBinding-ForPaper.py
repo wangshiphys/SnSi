@@ -160,7 +160,7 @@ if __name__ == "__main__":
     ax.set_yticklabels([""] * len(baselines))
     ax.set_xticks([-3, -2, -1, 0, 1, 2])
     ax.set_xticklabels(["-3", "-2", "-1", "0", "1", "2"], fontsize=20)
-    ax.set_xlabel(r"$\omega/t_1$", fontsize=20)
+    ax.set_xlabel(r"$\omega/t_0$", fontsize=20)
     ax.set_ylabel("DOS (arb. units)", fontsize=20)
     ax.tick_params(axis="y", left=False)
     ax.grid(axis="y", ls="dashed", lw=1.5, color="gray")
