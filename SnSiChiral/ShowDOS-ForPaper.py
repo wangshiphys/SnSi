@@ -52,7 +52,7 @@ for i in range(2):
             xticklabels = ["{0}".format(xtick) for xtick in xticks]
             axes[i, j].set_xticks(xticks)
             axes[i, j].set_xticklabels(xticklabels, fontsize=20)
-            axes[i, j].set_xlabel(r"$\omega/t_1$", fontsize=20)
+            axes[i, j].set_xlabel(r"$\omega/t_0$", fontsize=20)
 
         yticks = [0, step, 2 * step]
         axes[i, j].set_yticks(yticks)
