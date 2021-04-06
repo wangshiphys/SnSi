@@ -80,7 +80,6 @@ for i in range(2):
 # hspace = 0.02,
 # wspace = 0.04
 plt.get_current_fig_manager().window.showMaximized()
-plt.tight_layout()
 plt.show()
-fig.savefig("CPTForPhase1LDOS.pdf", transparent=True)
+fig.savefig("fig/CPTForPhase1LDOS.pdf", transparent=True)
 plt.close("all")
