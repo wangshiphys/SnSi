@@ -139,11 +139,11 @@ if __name__ == "__main__":
     kpoints, indices = KPath([np.array([0.0, 0.0]), K, M])
 
     t0 = -1.00
-    t1 = -1.00
+    t1 = -0.50
     model = "Model1"
     GKMGEs = TightBinding(kpoints, model, return_vectors=False, t0=t0, t1=t1)
     GE, mu, avg_particle_nums, omegas, projected_dos = TypicalSolver(
-        cell, model, numk=200, gamma=0.05, t0=t0, t1=t1
+        cell, model, numk=200, gamma=0.02, t0=t0, t1=t1
     )
 
     info = [
