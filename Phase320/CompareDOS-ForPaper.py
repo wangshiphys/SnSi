@@ -63,6 +63,6 @@ ax.grid(axis="y", ls="dashed", lw=1.5, color="gray")
 # wspace = 0.2
 
 plt.tight_layout()
-fig.savefig("CPTForPhase1.pdf", transparent=True)
 plt.show()
+fig.savefig("fig/CPTForPhase1.pdf", transparent=True)
 plt.close("all")
