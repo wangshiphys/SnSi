@@ -115,7 +115,7 @@ def TypicalSolver(cell, enum=None, numk=100, gamma=0.01, **model_params):
 if __name__ == "__main__":
     cell = Lattice(ALL_POINTS[0:20], TRANSLATION_VECTORS)
     GE, mu, avg_particle_nums, omegas, projected_dos = TypicalSolver(
-        cell, numk=100, gamma=0.02, t0=-0.5, t1=-1.0
+        cell, numk=200, gamma=0.02, t0=-0.5, t1=-1.0
     )
 
     interval = 2.0
@@ -142,7 +142,14 @@ if __name__ == "__main__":
     ax.tick_params(axis="y", left=False)
     ax.grid(axis="y", ls="dashed", lw=1.5, color="gray")
 
+    # top = 0.99,
+    # bottom = 0.15,
+    # left = 0.092,
+    # right = 0.977,
+    # hspace = 0.2,
+    # wspace = 0.2
+
     plt.tight_layout()
     plt.show()
-    fig.savefig("TBAForPhase1.pdf", transparent=True)
+    fig.savefig("fig/TBAForPhase1.pdf", transparent=True)
     plt.close("all")
