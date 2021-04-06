@@ -135,7 +135,7 @@ def TypicalSolver(
 if __name__ == "__main__":
     cell = Lattice(points=POINTS, vectors=VECTORS)
     GE, mu, avg_particle_nums, omegas, projected_dos = TypicalSolver(
-        cell, numk=100, gamma=0.02, t0=-1.0, t1=-0.5
+        cell, numk=200, gamma=0.02, t0=-1.0, t1=-0.5
     )
 
     step = 1.0
@@ -143,11 +143,11 @@ if __name__ == "__main__":
     labels = ["avg", "site-0", "site-3", "site-4", "site-5"]
 
     fig, ax = plt.subplots()
-    ax.plot(omegas, np.mean(projected_dos, axis=1) + baselines[0], lw=3.0)
-    ax.plot(omegas, projected_dos[:, 0] + baselines[1], lw=3.0)
-    ax.plot(omegas, projected_dos[:, 3] + baselines[2], lw=3.0)
-    ax.plot(omegas, projected_dos[:, 4] + baselines[3], lw=3.0)
-    ax.plot(omegas, projected_dos[:, 5] + baselines[4], lw=3.0)
+    ax.plot(omegas, np.mean(projected_dos, axis=1) + baselines[0], lw=4.0)
+    ax.plot(omegas, projected_dos[:, 0] + baselines[1], lw=4.0)
+    ax.plot(omegas, projected_dos[:, 3] + baselines[2], lw=4.0)
+    ax.plot(omegas, projected_dos[:, 4] + baselines[3], lw=4.0)
+    ax.plot(omegas, projected_dos[:, 5] + baselines[4], lw=4.0)
     for baseline, label in zip(baselines, labels):
         ax.text(
             -3.0, baseline + 0.3, label, ha="center", va="bottom", fontsize=20
