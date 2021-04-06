@@ -3,10 +3,12 @@ import numpy as np
 
 from utilities import Mu
 
-U = 6.0
 site_num = 20
-dos_data_name = "data/dos/Phase320_t=-1.00_U={0:.2f}.npz".format(U)
+dos_data_name_temp = "data/dos/Phase320_Model1_t0={t0:.3f}" \
+                     "_t1={t1:.3f}_U={U:.3f}_NotScaled.npz"
 
+params = {"t0": -0.5, "t1": -1.0, "U": 6.0}
+dos_data_name = dos_data_name_temp.format(**params)
 with np.load(dos_data_name) as ld:
     dos = ld["dos"]
     omegas = ld["omegas"]
@@ -25,7 +27,7 @@ mu = (mu_p + mu_h) / 2
 particle_num = np.sum(total_dos[omegas < mu]) * domega
 local_particle_num = np.sum(dos[omegas < mu], axis=0) * domega
 
-print("U = {0:.1f}".format(U))
+print("t0 = {t0:.1f}, t1 = {t1:.1f}, U = {U:.1f}".format(**params))
 print("Sum of DoS: {0:.8f}".format(np.sum(dos) * domega))
 print("mu_p = {0:.8f}, mu_h = {1:.8f}, mu = {2:.8f}".format(mu_p, mu_h, mu))
 print("Particle number: {0:.8f}".format(particle_num))
