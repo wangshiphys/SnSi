@@ -1,4 +1,4 @@
-\documentclass[aps,prb,reprint,amsfonts,amsmath,amssymb,showpacs,groupedaddress,superscriptaddress]{revtex4-1}
+\documentclass[aps,prb,amsfonts,amsmath,amssymb,showpacs,groupedaddress,superscriptaddress]{revtex4-1}
 \usepackage{bm}
 \usepackage{color}
 \usepackage{graphicx}
@@ -7,7 +7,7 @@
 
 \begin{document}
 
-\title{Artificial two-dimensional Mott insulating superstructures with a large Mott gap: Theoretical Formalism}
+\title{Artificial two-dimensional Mott insulating superstructures with a large Mott gap: Theoretical Part}
 
 \date{\today}
 
@@ -15,12 +15,13 @@
 
 To have a better understading of the experimental observations, we construct single-band Hubbard model with renormalized hopping coefficients to describe these systems and calculate the local density of states by using cluster perturbation theory (CPT)~\cite{PhysRevB.48.418,PhysRevLett.84.522}.
 
-For the $(3\sqrt{7} \times 3\sqrt{7})R19.1^\circ$ surface (referred to as Phase 1 in the followings), the corresponding proposed atomic structural is shown in Fig.~\ref{fig:STMTopographicImage}(g). The unit cell contains twenty-three sites while three of them are somewhat isolated, i.e., the three blue circles are speparated from the others. Considering that the hopping amplitude is inversely proportional to the square of the distance, it is reasonable to neglect the three isolated sites in a simplified model. We only include these hopping terms shown in Fig.~\ref{fig:ModelForPhase1} and the resulting Hamiltonian takes the following form:
+For the $(3\sqrt{7} \times 3\sqrt{7})R19.1^\circ$ surface (referred to as Phase 1 in the following), the corresponding proposed atomic structural is shown in Fig.~\ref{fig:STMTopographicImage}(g). The unit cell contains twenty-three sites while three of them are somewhat isolated, i.e., the three blue circles are speparated from the others. Considering that the hopping amplitude is inversely proportional to the square of the distance, it is reasonable to neglect the three isolated sites in a simplified model. We only include these hopping terms shown in Fig.~\ref{fig:ModelForPhase1} and the resulting Hamiltonian takes the following form:
 \begin{equation}
     H = \sum_{i,j,\sigma} t_{ij}(c_{i\sigma}^{\dagger}c_{j\sigma} + \text{H.c.}) + U \sum_{i} n_{i\uparrow} n_{i\downarrow}
     \label{eq:ModelHamiltonian}
 \end{equation}
-where $t_{ij}$ is the effective hopping amplitude and $U$ the effective on-site Coulomb repulsion. Here, we take $t_{ij} = -t/r_{ij}^{2}$, where $r_{ij}$ is the distance between $i$-th and $j$-th site, $t$ is the hopping amplitude when the distance is 1. See Appendix~\ref{appx:Coordinates} for the coordinates of these sites shown in Fig.~\ref{fig:ModelForPhase1}.
+where $t_{ij}$ is the effective hopping amplitude and $U$ the effective on-site Coulomb repulsion. In Fig.~\ref{fig:ModelForPhase1}, the red points correspond to the center brightest spots in Fig.~\ref{fig:STMTopographicImage}(d), and the blue points correspond to the surrounding less bright spots in Fig.~\ref{fig:STMTopographicImage}(d). The hopping amplitudes between the center red point and the surrounding blue points are taken to be $t_0$, and the hopping amplitudes between these adjacent blue points are $t_1$.
+Since the atoms corresponding to the brightest spots in the center are not in the same atomic layer as the atoms corresponding to the less bright spots around (see Fig.~\ref{fig:STMTopographicImage}(d)), $t_0$ should be less than $t_1$. Here, we take $t_0 = -0.5$ and $t_1 = 1.0$.
 
 For this model Hamiltonian, we first consider the non-interacting case (\textit{i.e.,} $U = 0$) which can be diagonalized exactly. The averaged DOS and representative LDOS are shown in Fig.~\ref{fig:TBAForPhase1}. It can be clearly seen from the averaged DOS that the system has an energy gap of $\sim 0.55t$. However, the LDOS varies from site to site. For instance, the LDOS of the site labeled as ``0'' is quite different from the sites labeled as ``1'', ``2'' and ``3''. Especially, the energy gap at the zeroth site is $\sim 3.2t$, and yet that at other sites is $\sim 0.55t$. This inhomogeneous LDOS is obviously contradictory to the experimental uniform insulating gap. We further include on-site Coulomb repulsion and use CPT to calculate the LDOS. The evolution of the averaged DOS with U is shown in Fig.~\ref{fig:CPTForPhase1}. The energy gap becomes gradually decreased when taking into account of Hubbard-$U$ and a transition from band insulator to metal is identified at $U \approx 3.5t$. As we further increase $U$, an energy gap is reopened, indicating a metal-insulator transition. The including of $U = 6t$ leads to an experimentally comparable large energy gap of $\sim 2.31\text{eV}$. We further explored the corresponding LDOS and found that the energy gap is uniform at each lattice sites from 0 to 19 (see Fig.~\ref{fig:CPTForPhase1LDOS}), which is consistent with the experimentally observed homengeneous dI/dV spectra. The agreement between the experimental observation and theoretical calculation indicates the Mott origin of the large energy gap of $\sim 2.5\text{eV}$ for $(3\sqrt{7} \times 3\sqrt{7})R19.1^\circ$ surface.
 
@@ -50,8 +51,7 @@ Phase 2 and Phase3 is larger than the gap size of Phase 1, which is qualitativel
 
 \begin{figure}[p]
     \centering
-    \includegraphics[width=\columnwidth]{fig/CPTForPhase1LDOS0.pdf}
-    \includegraphics[width=\columnwidth]{fig/CPTForPhase1LDOS1.pdf}
+    \includegraphics[width=\columnwidth]{fig/CPTForPhase1LDOS.pdf}
     \caption{\label{fig:CPTForPhase1LDOS} Local density of states at $U = 6t$.}
 \end{figure}
 
@@ -64,50 +64,6 @@ Phase 2 and Phase3 is larger than the gap size of Phase 1, which is qualitativel
     \includegraphics[width=\columnwidth]{fig/CPTForPhase2andPhase3.pdf}
     \caption{\label{fig:CPTForPhase2andPhase3} (Color online) The evolution of averaged DOS with Hubbard-$U$.}
 \end{figure}
-
-\begin{figure}
-    \includegraphics[width=\columnwidth]{fig/CPTForPhase2andPhase3Random.pdf}
-    \caption{\label{fig:CPTForPhase2andPhase3Random} (Color Online) DOS at $U = 6t$ with random hopping amplitude.}
-\end{figure}
-
-\appendix
-
-\section{\label{appx:Coordinates}Coordinates of these sites in Phase 1}
-
-\begin{table}[h]
-    \centering
-    \begin{tabular}{c | l | c | l}
-        \hline
-        index & (x, y) & index & (x, y) \\
-        \hline
-        0 & (0, 0) & 1 & (-1.5, $\sqrt{3} / 6$) \\
-        \hline
-        2 & (-1.0, -$\sqrt{3}$ / 3) & 3 & (-0.5, -5$\sqrt{3}$ / 6) \\
-        \hline
-        4 & (0.5, -5$\sqrt{3}$ / 6) & 5 & (1.0, -$\sqrt{3}$ / 3) \\
-        \hline
-        6 & (1.5, $\sqrt{3}$ / 6) & 7 & (1.0, 2$\sqrt{3}$ / 3) \\
-        \hline
-        8 & (0.0, 2$\sqrt{3}$ / 3) & 9 & -1.0, 2$\sqrt{3}$ / 3 \\
-        \hline
-        10 & (4.5, $\sqrt{3}$ / 2) & 11 & (3.0, $\sqrt{3}$ / 3) \\
-        \hline
-        12 & (3.5, -$\sqrt{3}$ / 6) & 13 & (4.5, -$\sqrt{3}$ / 6) \\
-        \hline
-        14 & (5.5, -$\sqrt{3}$ / 6) & 15 & (6.0, $\sqrt{3}$ / 3) \\
-        \hline
-        16 & (5.5, 5$\sqrt{3}$ / 6) & 17 & (5.0, 4$\sqrt{3}$ / 3) \\
-        \hline
-        18 & (4.0, 4$\sqrt{3}$ / 3) & 19 & (3.5, 5$\sqrt{3}$ / 6) \\
-        \hline
-        20 & (8.0, $\sqrt{3}$ / 3) & 21 & (10.5, 5$\sqrt{3}$ / 6) \\
-        \hline
-        22 & (8.5, 11$\sqrt{3}$ / 6) & & \\
-        \hline
-    \end{tabular}
-    \caption{\label{tab:Coordinates}Coordinates of these sites in Phase 1.}
-\end{table}
-
 
 \bibliography{TheoreticalFormalism}
 
