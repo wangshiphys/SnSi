@@ -56,15 +56,17 @@ def TightBinding(kpoints, model="Model1", return_vectors=True, **model_params):
 
     for t, ijs in [(t0, intra_hopping_indices0), (t1, intra_hopping_indices1)]:
         for ij in ijs:
+            coeff = t
             p0, p1 = points_collection[ij]
-            coeff = t / np.dot(p1 - p0, p1 - p0)
+            # coeff = t / np.dot(p1 - p0, p1 - p0)
             index0 = cell.getIndex(p0, fold=False)
             index1 = cell.getIndex(p1, fold=False)
             terms.append((2 * index0, 2 * index1, coeff, zero_dr))
             terms.append((2 * index0 + 1, 2 * index1 + 1, coeff, zero_dr))
     for ij in inter_hopping_indices:
+        coeff = t1
         p0, p1 = points_collection[ij]
-        coeff = t1 / np.dot(p1 - p0, p1 - p0)
+        # coeff = t1 / np.dot(p1 - p0, p1 - p0)
         p0_eqv, dR0 = cell.decompose(p0)
         p1_eqv, dR1 = cell.decompose(p1)
         index0 = cell.getIndex(p0_eqv, fold=False)
@@ -146,7 +148,7 @@ if __name__ == "__main__":
     K = np.dot(np.array([2, 1]), cell.bs) / 3
     kpoints, indices = KPath([np.array([0.0, 0.0]), K, M])
 
-    t0 = -1.0
+    t0 = -0.5
     t1 = -1.0
     model = "Model1"
     GKMGEs = TightBinding(kpoints, model, return_vectors=False, t0=t0, t1=t1)
@@ -196,9 +198,9 @@ if __name__ == "__main__":
     axes_dos_avg.grid(ls="dashed", color="gray", axis="both")
 
     plt.show()
-    prefix = "fig/{0}_t0={1:.3f}_t1={2:.3f}".format(model, t0, t1)
-    fig_EB.savefig(prefix + "_EB.png", transparent=True)
-    fig_dos0.savefig(prefix + "_DOS0.png", transparent=True)
-    fig_dos1.savefig(prefix + "_DOS1.png", transparent=True)
-    fig_dos_avg.savefig(prefix + "_DOS_AVG.png", transparent=True)
+    # prefix = "fig/{0}_t0={1:.3f}_t1={2:.3f}".format(model, t0, t1)
+    # fig_EB.savefig(prefix + "_EB.png", transparent=True)
+    # fig_dos0.savefig(prefix + "_DOS0.png", transparent=True)
+    # fig_dos1.savefig(prefix + "_DOS1.png", transparent=True)
+    # fig_dos_avg.savefig(prefix + "_DOS_AVG.png", transparent=True)
     plt.close("all")
