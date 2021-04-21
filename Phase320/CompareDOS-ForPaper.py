@@ -12,13 +12,11 @@ ids = [
     {"t0":-0.5, "t1": -1.0, "U": 2.0},
     {"t0":-0.5, "t1": -1.0, "U": 3.0},
     {"t0":-0.5, "t1": -1.0, "U": 4.0},
-    {"t0":-0.5, "t1": -1.0, "U": 6.0},
+    {"t0":-0.5, "t1": -1.0, "U": 8.0},
 ]
 
-lines = []
-labels = []
 step = 1.5
-baselines = [0.0, step, 2 * step, 3 * step, 4 * step - 0.7]
+baselines = [0.0, step, 2 * step, 3 * step, 4 * step - 0.7, 4 * step]
 fig, ax = plt.subplots()
 for index, id in enumerate(ids):
     dos_data_name = dos_data_name_temp.format(**id)
@@ -38,30 +36,43 @@ for index, id in enumerate(ids):
     )
     mu = (mu_p + mu_h) / 2
 
-    line, = ax.plot(omegas - mu, avg_dos + baselines[index], lw=3.0)
-    lines.append(line)
-    labels.append("U={U:.1f}".format(**id))
-ax.axvline(0, ls="dashed", lw=2.0, color="black", zorder=0)
-ax.legend(lines[::-1], labels[::-1], loc="lower right", fontsize=16)
+    ax.plot(omegas - mu, avg_dos + baselines[index], lw=3.0)
 
-ax.set_xlim(-6.5, 6.5)
-ax.set_ylim(-0.1, 5.9)
+with np.load("../TriangleNNHubbard/Triangle34_U=8.00.npz") as ld:
+    dos = ld["dos"]
+    omegas = ld["omegas"]
+avg_dos = np.mean(dos, axis=1)
+total_dos = np.sum(dos, axis=1)
+mu_p = Mu(total_dos, omegas, occupied_num=12, total_num=24, reverse=False)
+mu_h = Mu(total_dos, omegas, occupied_num=12, total_num=24, reverse=True)
+mu = (mu_p + mu_h) / 2
+ax.plot(omegas - mu + 0.6, avg_dos + baselines[-1], lw=3.0, color="tab:cyan")
+
+ax.axvline(0, ls="dashed", lw=2.0, color="black", zorder=0)
+ax.text(8.5, baselines[0], "U=0.0", ha="right", va="bottom", fontsize=20)
+ax.text(8.5, baselines[1], "U=2.0", ha="right", va="bottom", fontsize=20)
+ax.text(8.5, baselines[2], "U=3.0", ha="right", va="bottom", fontsize=20)
+ax.text(8.5, baselines[3], "U=4.0", ha="right", va="bottom", fontsize=20)
+ax.text(8.5, baselines[4] + 0.10, "U=8.0", ha="right", va="bottom", fontsize=20)
+ax.text(
+    8.5, baselines[5] + 0.05, "TL,U=8.0", ha="right", va="bottom", fontsize=20
+)
+
+ax.set_xlim(-8.5, 8.5)
+ax.set_ylim(-0.1, 6.7)
 ax.set_yticks(baselines)
 ax.set_yticklabels([""]*len(baselines))
-ax.set_xticks([-6, -4, -2, 0, 2, 4, 6])
-ax.set_xticklabels(["-6", "-4", "-2", "0", "2", "4", "6"], fontsize=20)
+xticks = [-8, -6, -4, -2, 0, 2, 4, 6, 8]
+xticklabels = ["{0}".format(xtick) for xtick in xticks]
+ax.set_xticks(xticks)
+ax.set_xticklabels(xticklabels, fontsize=20)
 ax.set_xlabel(r"$\omega/t_1$", fontsize=20)
 ax.set_ylabel("DOS (arb. units)", fontsize=20)
 ax.tick_params(axis="y", left=False)
 ax.grid(axis="y", ls="dashed", lw=1.5, color="gray")
 
-# top = 0.99,
-# bottom = 0.15,
-# left = 0.09,
-# right = 0.97,
-# hspace = 0.2,
-# wspace = 0.2
-
+fig.set_size_inches(4.80, 4.67)
+fig.text(0.02, 0.98, "(b)", ha="left", va="top", fontsize=25)
 plt.tight_layout()
 plt.show()
 fig.savefig("fig/CPTForPhase1.pdf", transparent=True)
