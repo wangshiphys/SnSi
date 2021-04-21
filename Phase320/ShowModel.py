@@ -81,10 +81,10 @@ for index, point in enumerate(points_collection):
     cell_index = cell.getIndex(point, fold=True)
     if cell_index in (0, 10):
         color = "tab:red"
-        marker_size = 30
+        marker_size = 20
     else:
         color = "tab:blue"
-        marker_size = 25
+        marker_size = 16
 
     ax.plot(
         point[0], point[1],
@@ -95,37 +95,38 @@ for index, point in enumerate(points_collection):
         # str(index),
         str(cell_index),
         ha="center", va="center", color="black",
-        fontsize=18, zorder=2, clip_on=True,
+        fontsize=12, zorder=2, clip_on=True,
     )
 
 for ij in intra_hopping_indices0:
     bond = points_collection[ij]
     line0, = ax.plot(
         bond[:, 0], bond[:, 1], color="tab:red",
-        ls="solid", lw=3.0, zorder=0
+        ls="solid", lw=2.0, zorder=0
     )
 for ij in intra_hopping_indices1:
     bond = points_collection[ij]
     line1, = ax.plot(
         bond[:, 0], bond[:, 1], color="tab:blue",
-        ls="solid", lw=5.0, zorder=0
+        ls="solid", lw=3.0, zorder=0
     )
 for ij in inter_hopping_indices:
     bond = points_collection[ij]
     line2, = ax.plot(
         bond[:, 0], bond[:, 1], color="tab:blue",
-        ls="dotted", lw=5.0, zorder=0
+        ls="dotted", lw=3.0, zorder=0
     )
 ax.legend(
     [line0, line1, line2], ["$t_0$", "$t_1$", "$t_1$"],
-    loc="center", fontsize=30,
+    loc="center", fontsize=20,
 )
 
 ax.set_xlim(-4.5, 9.0)
 ax.set_ylim(-2.0, 10.0)
 ax.set_axis_off()
 ax.set_aspect("equal")
-fig.set_size_inches(9.60, 9.36)
+fig.set_size_inches(4.80, 4.67)
+fig.text(0.02, 0.98, "(a)", ha="left", va="top", fontsize=25)
 plt.tight_layout()
 plt.show()
 fig.savefig("fig/Model.pdf", transparent=True)
