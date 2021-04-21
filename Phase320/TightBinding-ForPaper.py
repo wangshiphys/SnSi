@@ -118,21 +118,20 @@ if __name__ == "__main__":
         cell, numk=200, gamma=0.02, t0=-0.5, t1=-1.0
     )
 
-    interval = 2.0
+    interval = 2.75
     fig, ax = plt.subplots()
-    line_avg, = ax.plot(omegas, np.mean(projected_dos, axis=1), lw=3.0)
-    line_site0, = ax.plot(omegas, projected_dos[:, 0] + 1*interval, lw=3.0)
-    line_site1, = ax.plot(omegas, projected_dos[:, 2] + 2*interval, lw=3.0)
-    line_site3, = ax.plot(omegas, projected_dos[:, 6] + 3*interval, lw=3.0)
+    ax.plot(omegas, projected_dos[:, 0] + 0*interval, lw=3.0, zorder=2)
+    ax.plot(omegas, projected_dos[:, 2] + 1*interval, lw=3.0, zorder=4)
+    ax.plot(omegas, projected_dos[:, 4] + 2*interval, lw=3.0, zorder=3)
+    ax.plot(omegas, projected_dos[:, 6] + 3*interval, lw=3.0, zorder=4)
     ax.axvline(mu, ls="dashed", lw=2.0, color="black", zorder=0)
-    ax.legend(
-        [line_avg, line_site0, line_site1,  line_site3],
-        ["avg", "site-0", "site-1", "site-3"],
-        ncol=2, columnspacing=1.0, loc="upper left", fontsize=17, frameon=True,
-    )
+    ax.text(-2.4, 0*interval+0.05, "0", ha="center", va="bottom", fontsize=20)
+    ax.text(-2.4, 1*interval+0.05, "1", ha="center", va="bottom", fontsize=20)
+    ax.text(-2.4, 2*interval+0.05, "2", ha="center", va="bottom", fontsize=20)
+    ax.text(-2.4, 3*interval+0.05, "3", ha="center", va="bottom", fontsize=20)
 
     ax.set_xlim(-3.5, 2.5)
-    ax.set_ylim(-0.5, 15.1)
+    ax.set_ylim(-0.3, 13.2)
     ax.set_yticks([0.0, 1*interval, 2*interval, 3*interval])
     ax.set_xticks([-3, -2, -1, 0, 1, 2])
     ax.set_yticklabels(["", "", "", ""])
@@ -140,15 +139,10 @@ if __name__ == "__main__":
     ax.set_xlabel(r"$\omega/t_1$", fontsize=20)
     ax.set_ylabel("DOS (arb. units)", fontsize=20)
     ax.tick_params(axis="y", left=False)
-    ax.grid(axis="y", ls="dashed", lw=1.5, color="gray")
+    ax.grid(axis="y", ls="dashed", lw=1.5, color="gray", zorder=0)
 
-    # top = 0.99,
-    # bottom = 0.15,
-    # left = 0.092,
-    # right = 0.977,
-    # hspace = 0.2,
-    # wspace = 0.2
-
+    fig.set_size_inches(4.80, 4.67)
+    fig.text(0.02, 0.98, "(c)", ha="left", va="top", fontsize=25)
     plt.tight_layout()
     plt.show()
     fig.savefig("fig/TBAForPhase1.pdf", transparent=True)
